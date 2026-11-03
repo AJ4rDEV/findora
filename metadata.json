@@ -1,0 +1,6 @@
+{
+  "name": "Findora - Multilingual Lost & Found Community",
+  "description": "A modern, community-driven Lost & Found platform supporting English, Arabic, Kurdish Sorani, and Turkish with real reports, secure verification, and item recovery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

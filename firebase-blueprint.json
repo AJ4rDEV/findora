@@ -1,0 +1,174 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public and private user account profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 100 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "preferredLanguage": { "type": "string", "enum": ["en", "ar", "ku", "tr"] },
+        "themePreference": { "type": "string", "enum": ["light", "dark", "system"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended", "deleted"] }
+      },
+      "required": ["uid", "fullName", "preferredLanguage"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "Lost or found item report",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string", "maxLength": 128 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "authorName": { "type": "string", "maxLength": 100 },
+        "type": { "type": "string", "enum": ["lost", "found"] },
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "category": {
+          "type": "string",
+          "enum": [
+            "electronics",
+            "keys",
+            "wallets_bags",
+            "documents_id",
+            "clothing",
+            "jewelry",
+            "pets",
+            "books_education",
+            "vehicles_accessories",
+            "other"
+          ]
+        },
+        "generalLocation": { "type": "string", "maxLength": 150 },
+        "eventDate": { "type": "string", "maxLength": 50 },
+        "images": { "type": "string", "maxLength": 10000 },
+        "contactPreference": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["active", "resolved", "closed"] },
+        "likesCount": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["reportId", "authorUid", "type", "title", "description", "category", "generalLocation", "eventDate", "status"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Comment on a report",
+      "type": "object",
+      "properties": {
+        "commentId": { "type": "string", "maxLength": 128 },
+        "reportId": { "type": "string", "maxLength": 128 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "authorName": { "type": "string", "maxLength": 100 },
+        "text": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["commentId", "reportId", "authorUid", "text"]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "description": "User bookmarked report",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["reportId"]
+    },
+    "Like": {
+      "title": "Like",
+      "description": "User like on a report",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct chat between two users regarding a report",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "maxLength": 128 },
+        "reportId": { "type": "string", "maxLength": 128 },
+        "reportTitle": { "type": "string", "maxLength": 150 },
+        "participants": { "type": "string", "maxLength": 300 },
+        "participantNames": { "type": "string", "maxLength": 300 },
+        "lastMessage": { "type": "string", "maxLength": 500 },
+        "updatedAt": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["conversationId", "reportId", "participants"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual message in a conversation",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string", "maxLength": 128 },
+        "conversationId": { "type": "string", "maxLength": 128 },
+        "senderUid": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "text": { "type": "string", "maxLength": 1500 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["messageId", "conversationId", "senderUid", "text"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app user notification",
+      "type": "object",
+      "properties": {
+        "notificationId": { "type": "string", "maxLength": 128 },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["comment", "like", "message", "status_change"] },
+        "relatedReportId": { "type": "string", "maxLength": 128 },
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "message": { "type": "string", "maxLength": 300 },
+        "read": { "type": "string", "enum": ["true", "false"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["notificationId", "recipientUid", "type", "message"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile records indexed by auth UID"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/Report" },
+      "description": "Public lost and found reports"
+    },
+    "/reports/{reportId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Comments on a given report"
+    },
+    "/reports/{reportId}/likes/{userId}": {
+      "schema": { "$ref": "#/entities/Like" },
+      "description": "Likes on a given report"
+    },
+    "/users/{uid}/bookmarks/{reportId}": {
+      "schema": { "$ref": "#/entities/Bookmark" },
+      "description": "Bookmarked reports for a user"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "Direct conversations between users"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages inside a conversation"
+    },
+    "/users/{uid}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "Notifications directed to a user"
+    }
+  }
+}
